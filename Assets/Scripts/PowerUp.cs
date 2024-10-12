@@ -1,0 +1,91 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PowerUp : MonoBehaviour
+{
+    private BouncyBall bouncyBall;
+    private MovementHandler movementHandler;
+    public enum PowerUpType
+    {
+        ExtraLife,
+        LevelUp,
+        SpeedUp,
+        SlowDown,
+        MultiBall,
+        StickyPaddle,
+        BigPaddle,
+        SmallPaddle,
+        LockDown,
+
+    }
+    public PowerUpType powerUpType;
+
+    public GameObject lockDown;
+    public float minY = -5.5f;
+
+    public void Awake()
+    {
+        bouncyBall = FindObjectOfType<BouncyBall>();
+        movementHandler = FindObjectOfType<MovementHandler>();
+    }
+    public void Update()
+    {
+        if (transform.position.y < minY)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Paddle"))
+        {
+            {
+                switch (powerUpType)
+                {
+                    case PowerUpType.ExtraLife:
+                        bouncyBall.setLives(bouncyBall.getLives() + 1);
+                        break;
+                    case PowerUpType.LevelUp:
+                        FindObjectOfType<LevelGenerator>().ChangeLevel();
+                        break;
+                    case PowerUpType.SpeedUp:
+                        // bouncyBall.maxVelocity += 2;
+                        break;
+                    case PowerUpType.SlowDown:
+                        // bouncyBall.maxVelocity -= 2;
+                        break;
+                    case PowerUpType.MultiBall:
+                        // bouncyBall..multiBall();
+                        break;
+                    case PowerUpType.StickyPaddle:
+                        bouncyBall.stickyBall();
+                        break;
+                    case PowerUpType.BigPaddle:
+                        movementHandler.bigPaddle();
+                        break;
+                    case PowerUpType.SmallPaddle:
+                        movementHandler.smallPaddle();
+                        break;
+                    case PowerUpType.LockDown:
+                        LockDown lockObj = FindObjectOfType<LockDown>();
+                        if (lockObj != null)
+                        {
+                            lockObj.ResetTimer();
+                        }
+                        else
+                        {
+
+                            Instantiate(lockDown, new Vector3(0, -4.5f, 0), Quaternion.identity);
+                        }
+                        break;
+
+                }
+                Destroy(this.gameObject);
+            }
+
+
+        }
+    }
+}
