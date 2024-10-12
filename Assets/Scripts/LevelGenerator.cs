@@ -19,7 +19,23 @@ public class LevelGenerator : MonoBehaviour
 
     private void GenerateLevel()
     {
-        mapOffset = new Vector2(mapSize.x * brickSize.x / 2, mapSize.y * brickSize.y / 2);
+        bool offsetMode = Random.Range(0, 2) == 1;
+        bool isRow = Random.Range(0, 2) == 1;
+
+        float offsetX = isRow && offsetMode ? Random.Range(-2, 2) : 0;
+        float origOffsetX = ((mapSize.x * brickSize.x));
+        float gapOffsetX = (((mapSize.x - 1) * (brickOffset.x - brickSize.x)));
+        float columnOffsetX = (((mapSize.y - 1) * offsetX));
+
+        float offsetY = !isRow && offsetMode ? Random.Range(-2, 2) : 0;
+        float origOffsetY = ((mapSize.y * brickSize.y));
+        float gapOffsetY = (((mapSize.y - 1) * (brickOffset.y - brickSize.y)));
+        float rowOffset = (((mapSize.x - 1) * offsetY));
+        mapOffset = new Vector2(
+            (origOffsetX + gapOffsetX + columnOffsetX) / 2,
+            (origOffsetY + gapOffsetY + rowOffset) / 2
+        );
+
         bool isRowPattern = Random.Range(0, 2) == 1;
         GameObject[] rowBricks = new GameObject[mapSize.y];
         if (isRowPattern)
@@ -34,13 +50,19 @@ public class LevelGenerator : MonoBehaviour
             GameObject columnBrick = getRandomBrick();
             for (int y = 0; y < mapSize.y; y++)
             {
+                float origXPos = (transform.position.x + x * brickOffset.x);
+                float offsetXPos = (y * offsetX);
+
+                float origYPos = (transform.position.y + y * brickOffset.y);
+                float offsetYPos = (x * offsetY);
+
                 Vector3 position = new Vector3(
-                    ((transform.position.x + x) - (mapOffset.x - brickSize.x / 2)) * brickOffset.x,
-                    transform.position.y + y * brickOffset.y,
+                    origXPos - mapOffset.x + offsetXPos + brickSize.x / 2,
+                    origYPos - mapOffset.y + offsetYPos + brickSize.y / 2,
                     0
                 );
 
-                if (position.x > boundX || position.x < -boundX || position.y > boundY) continue;
+                if (position.x > boundX || position.x < -boundX || position.y > boundY || position.y < -boundY + 2) continue;
                 GameObject brick = Instantiate(isRowPattern ? rowBricks[y] : columnBrick, transform);
                 brick.transform.position = position;
             }
