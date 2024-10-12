@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     private Vector3 origBouncyBallPosition;
     private BouncyBall[] bouncyBalls;
 
+    public GameObject lockDown;
     private LevelGenerator levelGenerator;
 
     public AudioSource audioSource;
@@ -100,6 +101,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void setLockDown()
+    {
+        LockDown lockObj = FindObjectOfType<LockDown>();
+        if (lockObj != null)
+        {
+            lockObj.ResetTimer();
+        }
+        else
+        {
+
+            Instantiate(lockDown, new Vector3(0, -4.5f, 0), Quaternion.identity);
+        }
+    }
     public int getLevel()
     {
         return level;

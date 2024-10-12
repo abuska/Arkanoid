@@ -21,7 +21,7 @@ public class PowerUp : MonoBehaviour
     }
     public PowerUpType powerUpType;
     private GameManager gameManager;
-    public GameObject lockDown;
+
     public float minY = -5.5f;
 
     public void Awake()
@@ -70,16 +70,7 @@ public class PowerUp : MonoBehaviour
                         paddle.smallPaddle();
                         break;
                     case PowerUpType.LockDown:
-                        LockDown lockObj = FindObjectOfType<LockDown>();
-                        if (lockObj != null)
-                        {
-                            lockObj.ResetTimer();
-                        }
-                        else
-                        {
-
-                            Instantiate(lockDown, new Vector3(0, -4.5f, 0), Quaternion.identity);
-                        }
+                        gameManager.setLockDown();
                         break;
 
                 }
