@@ -23,6 +23,8 @@ public class Paddle : MonoBehaviour
     private float stickyTimer = 0f;
     public void setPaddleToSticky()
     {
+        audioSource.clip = stickyClip;
+        audioSource.Play();
         stickyTimer = stickyTime;
         isSticky = true;
     }
@@ -33,6 +35,7 @@ public class Paddle : MonoBehaviour
             if (stickyTimer <= 0)
             {
                 isSticky = false;
+                audioSource.Stop();
             }
             stickyTimer -= Time.deltaTime;
         }
@@ -41,7 +44,9 @@ public class Paddle : MonoBehaviour
     // Paddle size change variables
     private float sizeChangeTime = 5f;
     private float sizeChangeTimer = 0f;
-    public AudioSource sizeChangeSound;
+    public AudioSource audioSource;
+    public AudioClip sizeChangeClip;
+    public AudioClip stickyClip;
     public void handlePaddleSizeChanges()
     {
         if (sizeChangeTimer > 0)
@@ -50,7 +55,8 @@ public class Paddle : MonoBehaviour
             if (sizeChangeTimer <= 0)
             {
                 normalPaddle();
-                sizeChangeSound.Play();
+                audioSource.clip = sizeChangeClip;
+                audioSource.Play();
             }
         }
     }
@@ -87,13 +93,15 @@ public class Paddle : MonoBehaviour
     {
         transform.localScale = BIG_PADDLE_SIZE;
         sizeChangeTimer = sizeChangeTime;
-        sizeChangeSound.Play();
+        audioSource.clip = sizeChangeClip;
+        audioSource.Play();
     }
     public void smallPaddle()
     {
         transform.localScale = SMALL_PADDLE_SIZE;
         sizeChangeTimer = sizeChangeTime;
-        sizeChangeSound.Play();
+        audioSource.clip = sizeChangeClip;
+        audioSource.Play();
     }
 
     // Sticky paddle collision with balls

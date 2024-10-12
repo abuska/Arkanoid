@@ -70,8 +70,9 @@ public class BouncyBall : MonoBehaviour
     }
 
     // Lifecycle helpers
-    private void handleVelocity()
+    public void handleVelocity()
     {
+        if (!isStarted) return;
 
         if (rb.velocity.x == 0 && rb.velocity.y == 0)
         {
@@ -89,9 +90,11 @@ public class BouncyBall : MonoBehaviour
         }
     }
 
-    private void setPositionToPaddle()
+    public void setPositionToPaddle()
     {
+        if (isStarted) return;
         transform.position = new Vector3(paddle.GetPosition().x, originalPosition.y, originalPosition.z);
+
     }
 
     // Lifecycle
@@ -101,18 +104,6 @@ public class BouncyBall : MonoBehaviour
         paddle = FindObjectOfType<Paddle>();
         originalPosition = transform.position;
         gameManager = FindObjectOfType<GameManager>();
-    }
-
-    void Update()
-    {
-        if (!isStarted)
-        {
-            setPositionToPaddle();
-        }
-        else
-        {
-            handleVelocity();
-        }
     }
 
     // Collisions

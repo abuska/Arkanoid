@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    private float boundX = 7.5f;
+    private float boundX = 8.5f;
     public float boundY = 5.5f;
 
     private float boundOffset = 0.5f;
@@ -80,8 +80,11 @@ public class GameManager : MonoBehaviour
     {
         if (value > 0)
         {
+            if (value > lives)
+            {
+                playSound(increaseLifeSound);
+            }
             lives = value;
-            playSound(increaseLifeSound);
             return;
         };
         levelGenerator.ChangeLevel();
@@ -197,6 +200,8 @@ public class GameManager : MonoBehaviour
         }
         foreach (BouncyBall bouncyBall in bouncyBalls)
         {
+            bouncyBall.setPositionToPaddle();
+            bouncyBall.handleVelocity();
             Vector3 ballPosition = bouncyBall.transform.position;
             if (ballPosition.y < -boundY) handleFalling(bouncyBall);
 
