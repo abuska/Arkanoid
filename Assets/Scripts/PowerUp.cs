@@ -22,8 +22,6 @@ public class PowerUp : MonoBehaviour
     public PowerUpType powerUpType;
     private GameManager gameManager;
 
-    public float minY = -5.5f;
-
     public void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -32,7 +30,7 @@ public class PowerUp : MonoBehaviour
     }
     public void Update()
     {
-        if (transform.position.y < minY)
+        if (transform.position.y < -gameManager.boundY)
         {
             Destroy(this.gameObject);
         }
@@ -49,7 +47,7 @@ public class PowerUp : MonoBehaviour
                         gameManager.setLives(gameManager.getLives() + 1);
                         break;
                     case PowerUpType.LevelUp:
-                        FindObjectOfType<LevelGenerator>().ChangeLevel();
+                        gameManager.levelUp();
                         break;
                     case PowerUpType.SpeedUp:
                         gameManager.increaseBallsSpeed();
@@ -61,7 +59,7 @@ public class PowerUp : MonoBehaviour
                         gameManager.addBalls(2);
                         break;
                     case PowerUpType.StickyPaddle:
-                        bouncyBall.stickyBall();
+                        paddle.setPaddleToSticky();
                         break;
                     case PowerUpType.BigPaddle:
                         paddle.bigPaddle();
@@ -72,7 +70,6 @@ public class PowerUp : MonoBehaviour
                     case PowerUpType.LockDown:
                         gameManager.setLockDown();
                         break;
-
                 }
                 Destroy(this.gameObject);
             }

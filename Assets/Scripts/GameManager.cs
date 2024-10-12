@@ -20,11 +20,16 @@ public class GameManager : MonoBehaviour
     public GameObject lockDown;
     private LevelGenerator levelGenerator;
 
+    // Audio
     public AudioSource audioSource;
     public AudioClip increaseLifeSound;
     public AudioClip gameOverSound;
     public AudioClip levelUpSound;
     public AudioClip loseLifeSound;
+
+    // UI Elements
+
+    private ScoresUI scoresUI;
 
     void Start()
     {
@@ -32,23 +37,38 @@ public class GameManager : MonoBehaviour
         bouncyBalls = FindObjectsOfType<BouncyBall>();
         origBouncyBallPosition = bouncyBalls[0].transform.position;
         levelGenerator = FindObjectOfType<LevelGenerator>();
+        scoresUI = FindObjectOfType<ScoresUI>();
     }
 
     void Update()
     {
+        // Check if all bricks are destroyed and level up if true
+        if (levelGenerator.transform.childCount == 0)
+        {
+            levelUp();
+        }
+        paddle.handleIsSticky();
+        paddle.handlePaddleSizeChanges();
         handleHorizontalMovement();
         handleVerticalMovement();
         handleBallsMovement();
     }
 
-    public int getScore()
+    public void increaseScore(int value)
     {
-        return score;
+        setScore(score + value);
     }
 
     public void setScore(int value)
     {
         score = value;
+        scoresUI.setScore(score, level);
+    }
+
+    public void setLevel(int value)
+    {
+        level = value;
+        scoresUI.setScore(score, level);
     }
 
     public int getLives()
@@ -68,8 +88,8 @@ public class GameManager : MonoBehaviour
         playSound(gameOverSound);
 
         lives = 5;
-        level = 1;
-        score = 0;
+        setLevel(1);
+        setScore(0);
         // TODO destroy all balls except one
         foreach (BouncyBall bouncyBall in bouncyBalls)
         {
@@ -141,10 +161,12 @@ public class GameManager : MonoBehaviour
 
     public void levelUp()
     {
-        score += 500 * level;
-        level++;
+        increaseScore(500 * level);
+
+        setLevel(level + 1);
         setLives(lives + 1);
         playSound(levelUpSound);
+        levelGenerator.ChangeLevel();
         foreach (BouncyBall bouncyBall in bouncyBalls)
         {
             bouncyBall.restartBall();
@@ -169,14 +191,16 @@ public class GameManager : MonoBehaviour
     private void handleBallsMovement()
     {
         bouncyBalls = FindObjectsOfType<BouncyBall>();
+        if (bouncyBalls.Length == 0)
+        {
+            // TODO error handling add a ball
+        }
         foreach (BouncyBall bouncyBall in bouncyBalls)
         {
             Vector3 ballPosition = bouncyBall.transform.position;
             if (ballPosition.y < -boundY) handleFalling(bouncyBall);
 
             bouncyBall.handleBoundary(boundX, boundY);
-
-
         }
     }
 

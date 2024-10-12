@@ -4,31 +4,32 @@ using UnityEngine;
 
 public class BouncyBall : MonoBehaviour
 {
-    public bool isStarted = false;
-    private bool isSticky = false;
-    // TODO sticky should be in paddle
-    private float stickyTime = 5f;
-    private float stickyTimer = 0f;
-    public float ballSpeed = 10f;
-    public float maxSpeed = 16f;
-    public float minSpeed = 5f;
-    public Vector3 originalPosition;
-
+    private GameManager gameManager;
     public Rigidbody2D rb;
+    private Paddle paddle;
+    public Vector3 originalPosition;
+    public bool isStarted = false;
 
-    public Paddle paddle;
-
+    // Sounds     
     public AudioSource audioSource;
     public AudioClip brickHitSound;
 
-
-    void Awake()
+    // Ball speed
+    public float ballSpeed = 10f;
+    public float maxSpeed = 16f;
+    public float minSpeed = 5f;
+    public void increaseBallSpeed()
     {
-        rb = GetComponent<Rigidbody2D>();
-        paddle = FindObjectOfType<Paddle>();
-        originalPosition = transform.position;
+        if (ballSpeed >= maxSpeed) return;
+        ballSpeed += 2;
+    }
+    public void decreaseBallSpeed()
+    {
+        if (ballSpeed <= minSpeed) return;
+        ballSpeed -= 2;
     }
 
+    // Functions
     private void playSound(AudioClip sound)
     {
         audioSource.clip = sound;
@@ -41,18 +42,34 @@ public class BouncyBall : MonoBehaviour
         rb.velocity = new Vector2(0, ballSpeed);
         isStarted = true;
     }
+
     public void restartBall()
     {
         transform.position = originalPosition;
         rb.velocity = Vector2.zero;
         isStarted = false;
     }
-    public void stickyBall()
+
+    public void handleBoundary(float boundX, float boundY)
     {
-        stickyTimer = stickyTime;
-        isSticky = true;
+        if (transform.position.y > boundY)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -ballSpeed);
+            transform.position = new Vector3(transform.position.x, boundY, transform.position.z);
+        }
+        if (transform.position.x > boundX)
+        {
+            rb.velocity = new Vector2(-ballSpeed, rb.velocity.y);
+            transform.position = new Vector3(boundX, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x < -boundX)
+        {
+            rb.velocity = new Vector2(ballSpeed, rb.velocity.y);
+            transform.position = new Vector3(-boundX, transform.position.y, transform.position.z);
+        }
     }
 
+    // Lifecycle helpers
     private void handleVelocity()
     {
 
@@ -72,54 +89,22 @@ public class BouncyBall : MonoBehaviour
         }
     }
 
-    public void handleBoundary(
-        float boundX,
-        float boundY
-    )
-    {
-        if (transform.position.y > boundY)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, -ballSpeed);
-            transform.position = new Vector3(transform.position.x, boundY, transform.position.z);
-        }
-        if (transform.position.x > boundX)
-        {
-            rb.velocity = new Vector2(-ballSpeed, rb.velocity.y);
-            transform.position = new Vector3(boundX, transform.position.y, transform.position.z);
-        }
-        if (transform.position.x < -boundX)
-        {
-            rb.velocity = new Vector2(ballSpeed, rb.velocity.y);
-            transform.position = new Vector3(-boundX, transform.position.y, transform.position.z);
-        }
-    }
-
-    public void increaseBallSpeed()
-    {
-        if (ballSpeed >= maxSpeed) return;
-        ballSpeed += 2;
-    }
-    public void decreaseBallSpeed()
-    {
-        if (ballSpeed <= minSpeed) return;
-        ballSpeed -= 2;
-    }
-
     private void setPositionToPaddle()
     {
-        transform.position = new Vector3(paddle.GetPosition().x, transform.position.y, transform.position.z);
+        transform.position = new Vector3(paddle.GetPosition().x, originalPosition.y, originalPosition.z);
+    }
+
+    // Lifecycle
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        paddle = FindObjectOfType<Paddle>();
+        originalPosition = transform.position;
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
-        if (isSticky)
-        {
-            if (stickyTimer <= 0)
-            {
-                isSticky = false;
-            }
-            stickyTimer -= Time.deltaTime;
-        }
         if (!isStarted)
         {
             setPositionToPaddle();
@@ -130,35 +115,23 @@ public class BouncyBall : MonoBehaviour
         }
     }
 
+    // Collisions
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Brick"))
         {
             CollideBrick(collision.gameObject.GetComponent<Brick>());
         }
-        if (collision.gameObject.CompareTag("Paddle"))
-        {
-            HandleStickyBall();
-        }
     }
 
-    private void HandleStickyBall()
-    {
-        if (isSticky && isStarted)
-        {
-            rb.velocity = Vector2.zero;
-            isStarted = false;
-        }
-    }
-
+    // Collisions helpers
     private void CollideBrick(Brick brick)
     {
         playSound(brickHitSound);
-        float hitValue = brick.Hit();
-        if (hitValue > 0)
+        float hitScoreValue = brick.Hit();
+        if (hitScoreValue > 0)
         {
-            GameManager gameManager = FindObjectOfType<GameManager>();
-            gameManager.setScore(gameManager.getScore() + (int)hitValue);
+            gameManager.increaseScore((int)hitScoreValue);
         }
     }
 }

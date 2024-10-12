@@ -12,7 +12,6 @@ public class LevelGenerator : MonoBehaviour
     private float boundY = 4.5f;
     public GameObject[] brickPrefabs;
 
-
     private GameObject getRandomBrick()
     {
         return brickPrefabs[Random.Range(0, brickPrefabs.Length)];
@@ -51,17 +50,8 @@ public class LevelGenerator : MonoBehaviour
     private void Awake()
     {
         GenerateLevel();
+    }
 
-    }
-    private void Update()
-    {
-        if (transform.childCount == 0)
-        {
-            ChangeLevel();
-        }
-        // For testing purposes
-        // TriggerGeneration();
-    }
     public void ChangeLevel()
     {
         foreach (Transform child in transform)
@@ -71,9 +61,8 @@ public class LevelGenerator : MonoBehaviour
         mapSize = new Vector2Int(Random.Range(5, 10), Random.Range(5, 10));
         brickOffset = new Vector2(Random.Range(brickSize.x, 3), Random.Range(brickSize.y, 3));
         GenerateLevel();
-        GameManager gameManager = FindObjectOfType<GameManager>();
-        gameManager.levelUp();
     }
+
     private void TriggerGeneration()
     {
         if (Input.GetKeyDown(KeyCode.Space))
