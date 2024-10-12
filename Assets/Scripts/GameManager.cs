@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    private float bound = 7.5f;
-    public float minY = -5.5f;
+    private float boundX = 7.5f;
+    public float boundY = 5.5f;
+
+    private float boundOffset = 0.5f;
     private int score = 0;
     private int lives = 5;
     private int level = 1;
@@ -36,11 +38,7 @@ public class GameManager : MonoBehaviour
     {
         handleHorizontalMovement();
         handleVerticalMovement();
-        bouncyBalls = FindObjectsOfType<BouncyBall>();
-        foreach (BouncyBall bouncyBall in bouncyBalls)
-        {
-            if (bouncyBall.transform.position.y < minY) handleFalling(bouncyBall);
-        }
+        handleBallsMovement();
     }
 
     public int getScore()
@@ -114,6 +112,23 @@ public class GameManager : MonoBehaviour
             Instantiate(lockDown, new Vector3(0, -4.5f, 0), Quaternion.identity);
         }
     }
+
+    public void increaseBallsSpeed()
+    {
+        bouncyBalls = FindObjectsOfType<BouncyBall>();
+        foreach (BouncyBall bouncyBall in bouncyBalls)
+        {
+            bouncyBall.increaseBallSpeed();
+        }
+    }
+    public void decreaseBallsSpeed()
+    {
+        bouncyBalls = FindObjectsOfType<BouncyBall>();
+        foreach (BouncyBall bouncyBall in bouncyBalls)
+        {
+            bouncyBall.decreaseBallSpeed();
+        }
+    }
     public int getLevel()
     {
         return level;
@@ -140,7 +155,6 @@ public class GameManager : MonoBehaviour
     {
         if (ballCount() == 1)
         {
-
             bouncyBall.restartBall();
             playSound(loseLifeSound);
             paddle.ResetPaddle();
@@ -149,6 +163,20 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(bouncyBall.gameObject);
+        }
+    }
+
+    private void handleBallsMovement()
+    {
+        bouncyBalls = FindObjectsOfType<BouncyBall>();
+        foreach (BouncyBall bouncyBall in bouncyBalls)
+        {
+            Vector3 ballPosition = bouncyBall.transform.position;
+            if (ballPosition.y < -boundY) handleFalling(bouncyBall);
+
+            bouncyBall.handleBoundary(boundX, boundY);
+
+
         }
     }
 
@@ -161,7 +189,7 @@ public class GameManager : MonoBehaviour
     private void handleHorizontalMovement()
     {
         movementHorizontal = Input.GetAxis("Horizontal");
-        if ((movementHorizontal > 0 && paddle.transform.position.x < bound) || (movementHorizontal < 0 && paddle.transform.position.x > -bound))
+        if ((movementHorizontal > 0 && paddle.transform.position.x < boundX) || (movementHorizontal < 0 && paddle.transform.position.x > -boundX))
         {
             paddle.setPosition(movementHorizontal);
         }

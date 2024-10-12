@@ -9,12 +9,12 @@ public class BouncyBall : MonoBehaviour
     // TODO sticky should be in paddle
     private float stickyTime = 5f;
     private float stickyTimer = 0f;
-
-    public float maxVelocity = 15f;
     public float ballSpeed = 10f;
+    public float maxSpeed = 16f;
+    public float minSpeed = 5f;
     public Vector3 originalPosition;
 
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     public Paddle paddle;
 
@@ -55,6 +55,7 @@ public class BouncyBall : MonoBehaviour
 
     private void handleVelocity()
     {
+
         if (rb.velocity.x == 0 && rb.velocity.y == 0)
         {
             rb.velocity = new Vector2(0, ballSpeed);
@@ -64,12 +65,44 @@ public class BouncyBall : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, -ballSpeed);
         }
         rb.velocity = rb.velocity.normalized * ballSpeed;
-        Debug.Log("Velocity" + rb.velocity);
-        if (rb.velocity.magnitude > maxVelocity)
+        if (rb.velocity.magnitude > ballSpeed)
         {
-            rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, ballSpeed);
             Debug.Log("Clamping velocity" + rb.velocity);
         }
+    }
+
+    public void handleBoundary(
+        float boundX,
+        float boundY
+    )
+    {
+        if (transform.position.y > boundY)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -ballSpeed);
+            transform.position = new Vector3(transform.position.x, boundY, transform.position.z);
+        }
+        if (transform.position.x > boundX)
+        {
+            rb.velocity = new Vector2(-ballSpeed, rb.velocity.y);
+            transform.position = new Vector3(boundX, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x < -boundX)
+        {
+            rb.velocity = new Vector2(ballSpeed, rb.velocity.y);
+            transform.position = new Vector3(-boundX, transform.position.y, transform.position.z);
+        }
+    }
+
+    public void increaseBallSpeed()
+    {
+        if (ballSpeed >= maxSpeed) return;
+        ballSpeed += 2;
+    }
+    public void decreaseBallSpeed()
+    {
+        if (ballSpeed <= minSpeed) return;
+        ballSpeed -= 2;
     }
 
     private void setPositionToPaddle()

@@ -52,10 +52,10 @@ public class PowerUp : MonoBehaviour
                         FindObjectOfType<LevelGenerator>().ChangeLevel();
                         break;
                     case PowerUpType.SpeedUp:
-                        // bouncyBall.maxVelocity += 2;
+                        gameManager.increaseBallsSpeed();
                         break;
                     case PowerUpType.SlowDown:
-                        // bouncyBall.maxVelocity -= 2;
+                        gameManager.decreaseBallsSpeed();
                         break;
                     case PowerUpType.MultiBall:
                         gameManager.addBalls(2);
@@ -76,8 +76,6 @@ public class PowerUp : MonoBehaviour
                 }
                 Destroy(this.gameObject);
             }
-
-
         }
     }
 }
