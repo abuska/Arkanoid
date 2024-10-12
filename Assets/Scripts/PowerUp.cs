@@ -5,7 +5,7 @@ using UnityEngine;
 public class PowerUp : MonoBehaviour
 {
     private BouncyBall bouncyBall;
-    private MovementHandler movementHandler;
+    private Paddle paddle;
     public enum PowerUpType
     {
         ExtraLife,
@@ -27,7 +27,7 @@ public class PowerUp : MonoBehaviour
     public void Awake()
     {
         bouncyBall = FindObjectOfType<BouncyBall>();
-        movementHandler = FindObjectOfType<MovementHandler>();
+        paddle = FindObjectOfType<Paddle>();
     }
     public void Update()
     {
@@ -63,10 +63,10 @@ public class PowerUp : MonoBehaviour
                         bouncyBall.stickyBall();
                         break;
                     case PowerUpType.BigPaddle:
-                        movementHandler.bigPaddle();
+                        paddle.bigPaddle();
                         break;
                     case PowerUpType.SmallPaddle:
-                        movementHandler.smallPaddle();
+                        paddle.smallPaddle();
                         break;
                     case PowerUpType.LockDown:
                         LockDown lockObj = FindObjectOfType<LockDown>();

@@ -6,7 +6,6 @@ public class BouncyBall : MonoBehaviour
 {
     private bool isStarted = false;
     private bool isSticky = false;
-
     private float stickyTime = 5f;
     private float stickyTimer = 0f;
     public float minY = -5.5f;
@@ -19,7 +18,7 @@ public class BouncyBall : MonoBehaviour
     private int lives = 5;
     private int level = 1;
 
-    public MovementHandler paddle;
+    public Paddle paddle;
 
     public AudioSource audioSource;
     public AudioClip gameOverSound;
@@ -31,7 +30,7 @@ public class BouncyBall : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        paddle = FindObjectOfType<MovementHandler>();
+        paddle = FindObjectOfType<Paddle>();
         originalPosition = transform.position;
     }
     public int getScore()
@@ -91,20 +90,6 @@ public class BouncyBall : MonoBehaviour
         isSticky = true;
     }
 
-    // public void multiBall()
-    // {
-
-    //     GameObject ball = Instantiate(gameObject, originalPosition, Quaternion.identity);
-    //     ball.GetComponent<BouncyBall>().startBall();
-    //     Vector2 currentPosition = ball.transform.position;
-    //     Vector2 offset = new Vector2(
-    //         Random.Range(-0.5f, 0.5f),
-    //         Random.Range(-0.5f, 0.5f)
-    //     );
-    //     // add the current position with a small offset
-    //     ball.transform.position = currentPosition + offset;
-    // }
-
     public void levelUp()
     {
         score += 500 * level;
@@ -129,15 +114,6 @@ public class BouncyBall : MonoBehaviour
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
         }
     }
-
-    // public void increaseSpeed(float value)
-    // {
-    //     speed += value;
-    // }
-    // public void decreaseSpeed(float value)
-    // {
-    //     speed -= value;
-    // }
 
     private void setPositionToPaddle()
     {
