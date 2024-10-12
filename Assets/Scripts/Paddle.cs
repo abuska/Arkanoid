@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
-
 public class Paddle : MonoBehaviour
 {
     Vector3 BIG_PADDLE_SIZE = new Vector3(3f, 0.5f, 1f);

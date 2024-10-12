@@ -20,12 +20,13 @@ public class PowerUp : MonoBehaviour
 
     }
     public PowerUpType powerUpType;
-
+    private GameManager gameManager;
     public GameObject lockDown;
     public float minY = -5.5f;
 
     public void Awake()
     {
+        gameManager = FindObjectOfType<GameManager>();
         bouncyBall = FindObjectOfType<BouncyBall>();
         paddle = FindObjectOfType<Paddle>();
     }
@@ -45,7 +46,7 @@ public class PowerUp : MonoBehaviour
                 switch (powerUpType)
                 {
                     case PowerUpType.ExtraLife:
-                        bouncyBall.setLives(bouncyBall.getLives() + 1);
+                        gameManager.setLives(gameManager.getLives() + 1);
                         break;
                     case PowerUpType.LevelUp:
                         FindObjectOfType<LevelGenerator>().ChangeLevel();
@@ -57,7 +58,7 @@ public class PowerUp : MonoBehaviour
                         // bouncyBall.maxVelocity -= 2;
                         break;
                     case PowerUpType.MultiBall:
-                        // bouncyBall..multiBall();
+                        gameManager.addBalls(2);
                         break;
                     case PowerUpType.StickyPaddle:
                         bouncyBall.stickyBall();

@@ -4,66 +4,29 @@ using UnityEngine;
 
 public class BouncyBall : MonoBehaviour
 {
-    private bool isStarted = false;
+    public bool isStarted = false;
     private bool isSticky = false;
+    // TODO sticky should be in paddle
     private float stickyTime = 5f;
     private float stickyTimer = 0f;
-    public float minY = -5.5f;
-    public float maxVelocity = 15f;
-    public float speed = 5f;
-    public Vector3 originalPosition;
-    Rigidbody2D rb;
-    private int score = 0;
 
-    private int lives = 5;
-    private int level = 1;
+    public float maxVelocity = 15f;
+    public float ballSpeed = 10f;
+    public Vector3 originalPosition;
+
+    Rigidbody2D rb;
 
     public Paddle paddle;
 
     public AudioSource audioSource;
-    public AudioClip gameOverSound;
-    public AudioClip levelUpSound;
     public AudioClip brickHitSound;
-    public AudioClip loseLifeSound;
-    public AudioClip increaseLifeSound;
 
-    void Start()
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         paddle = FindObjectOfType<Paddle>();
         originalPosition = transform.position;
-    }
-    public int getScore()
-    {
-        return score;
-    }
-    public int getLives()
-    {
-        return lives;
-    }
-    public void setLives(int value)
-    {
-        if (value > 0)
-        {
-            lives = value;
-            playSound(increaseLifeSound);
-            return;
-        };
-
-        LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
-        levelGenerator.ChangeLevel();
-        playSound(gameOverSound);
-
-        lives = 5;
-        level = 1;
-        score = 0;
-        restartBall();
-
-
-    }
-    public int getLevel()
-    {
-        return level;
     }
 
     private void playSound(AudioClip sound)
@@ -75,7 +38,7 @@ public class BouncyBall : MonoBehaviour
     public void startBall()
     {
         if (isStarted) return;
-        rb.velocity = new Vector2(0, speed);
+        rb.velocity = new Vector2(0, ballSpeed);
         isStarted = true;
     }
     public void restartBall()
@@ -90,28 +53,22 @@ public class BouncyBall : MonoBehaviour
         isSticky = true;
     }
 
-    public void levelUp()
-    {
-        score += 500 * level;
-        level++;
-        setLives(lives + 1);
-        playSound(levelUpSound);
-        restartBall();
-    }
-
-    private void handleFalling()
-    {
-        restartBall();
-        playSound(loseLifeSound);
-        paddle.ResetPaddle();
-        setLives(lives - 1);
-    }
-
     private void handleVelocity()
     {
+        if (rb.velocity.x == 0 && rb.velocity.y == 0)
+        {
+            rb.velocity = new Vector2(0, ballSpeed);
+        }
+        if (rb.velocity.y == 0)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -ballSpeed);
+        }
+        rb.velocity = rb.velocity.normalized * ballSpeed;
+        Debug.Log("Velocity" + rb.velocity);
         if (rb.velocity.magnitude > maxVelocity)
         {
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+            Debug.Log("Clamping velocity" + rb.velocity);
         }
     }
 
@@ -138,8 +95,6 @@ public class BouncyBall : MonoBehaviour
         {
             handleVelocity();
         }
-        if (transform.position.y < minY) handleFalling();
-
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -169,7 +124,8 @@ public class BouncyBall : MonoBehaviour
         float hitValue = brick.Hit();
         if (hitValue > 0)
         {
-            score += (int)hitValue;
+            GameManager gameManager = FindObjectOfType<GameManager>();
+            gameManager.setScore(gameManager.getScore() + (int)hitValue);
         }
     }
 }

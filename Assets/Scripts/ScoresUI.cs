@@ -6,15 +6,15 @@ using TMPro;
 public class ScoresUI : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
-    private BouncyBall bouncyBall;
+    private GameManager gameManager;
     void Awake()
     {
-        bouncyBall = FindObjectOfType<BouncyBall>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
-        string text = "Score: " + bouncyBall.getScore().ToString() + "\nLevel: " + bouncyBall.getLevel().ToString();
+        string text = "Score: " + gameManager.getScore().ToString() + "\nLevel: " + gameManager.getLevel().ToString();
         scoreText.text = text;
     }
 }

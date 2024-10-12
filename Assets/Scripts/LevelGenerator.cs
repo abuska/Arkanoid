@@ -6,7 +6,6 @@ public class LevelGenerator : MonoBehaviour
 {
     public Vector2Int mapSize;
     public Vector2 brickOffset;
-
     private Vector2 brickSize = new Vector2(1, 0.5f);
     private Vector2 mapOffset;
     private float boundX = 7.5f;
@@ -72,8 +71,8 @@ public class LevelGenerator : MonoBehaviour
         mapSize = new Vector2Int(Random.Range(5, 10), Random.Range(5, 10));
         brickOffset = new Vector2(Random.Range(brickSize.x, 3), Random.Range(brickSize.y, 3));
         GenerateLevel();
-        BouncyBall bouncyBall = FindObjectOfType<BouncyBall>();
-        bouncyBall.levelUp();
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        gameManager.levelUp();
     }
     private void TriggerGeneration()
     {

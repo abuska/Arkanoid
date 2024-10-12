@@ -5,12 +5,12 @@ using UnityEngine;
 public class LivesUI : MonoBehaviour
 {
     public GameObject live;
-    private BouncyBall bouncyBall;
+    private GameManager gameManager;
 
     void Awake()
     {
-        bouncyBall = FindObjectOfType<BouncyBall>();
-        int currentLives = bouncyBall.getLives();
+        gameManager = FindObjectOfType<GameManager>();
+        int currentLives = gameManager.getLives();
         for (int i = 0; i < currentLives; i++)
         {
             GameObject newLive = Instantiate(live, transform);
@@ -30,7 +30,7 @@ public class LivesUI : MonoBehaviour
 
     public void Update()
     {
-        int currentLives = bouncyBall.getLives();
+        int currentLives = gameManager.getLives();
         if (currentLives < transform.childCount)
         {
             RemoveLive();
