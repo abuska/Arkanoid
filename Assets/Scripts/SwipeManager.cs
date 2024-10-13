@@ -87,7 +87,6 @@ public class SwipeManager : MonoBehaviour
             //Which direction?
             float x = swipeDelta.x;
             float y = swipeDelta.y;
-            Debug.Log(x + " " + y);
             if (Mathf.Abs(x) > Mathf.Abs(y))
             {
                 if (x < 0) swipeLeft = true;

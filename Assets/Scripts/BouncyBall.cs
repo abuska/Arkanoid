@@ -86,7 +86,6 @@ public class BouncyBall : MonoBehaviour
         if (rb.velocity.magnitude > ballSpeed)
         {
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, ballSpeed);
-            Debug.Log("Clamping velocity" + rb.velocity);
         }
     }
 

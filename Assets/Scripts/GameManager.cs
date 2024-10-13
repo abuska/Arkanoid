@@ -52,10 +52,10 @@ public class GameManager : MonoBehaviour
         handleHorizontalMovement();
         handleVerticalMovement();
         handleBallsMovement();
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            levelGenerator.ChangeLevel();
-        }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     levelGenerator.ChangeLevel();
+        // }
     }
 
     public void increaseScore(int value)
