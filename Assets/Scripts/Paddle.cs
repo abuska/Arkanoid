@@ -70,6 +70,7 @@ public class Paddle : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x + movementValue * speed * Time.deltaTime, transform.position.y, transform.position.z);
     }
+
     // Functions
     private void Awake()
     {

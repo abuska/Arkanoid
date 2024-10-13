@@ -221,8 +221,17 @@ public class GameManager : MonoBehaviour
 
     private void handleHorizontalMovement()
     {
-        movementHorizontal = Input.GetAxis("Horizontal");
-        if ((movementHorizontal > 0 && paddle.transform.position.x < boundX) || (movementHorizontal < 0 && paddle.transform.position.x > -boundX))
+
+        bool isSwipeMovement = SwipeManager.worldTapPosition.x != 0;
+
+        float offsetTolerance = 0.2f;
+        float xOffset = SwipeManager.worldTapPosition.x != 0 ? SwipeManager.worldTapPosition.x - paddle.transform.position.x : 0;
+        float swipeHorizontalMovement = Mathf.Abs(xOffset) > offsetTolerance ? Mathf.Sign(xOffset) : 0;
+
+        // If this is a swipe movement, use the swipeHorizontalMovement value to move the paddle
+        movementHorizontal = isSwipeMovement ? swipeHorizontalMovement : Input.GetAxis("Horizontal");
+
+        if (((movementHorizontal > 0 && paddle.transform.position.x < boundX) || (movementHorizontal < 0 && paddle.transform.position.x > -boundX)))
         {
             paddle.setPosition(movementHorizontal);
         }
@@ -230,7 +239,8 @@ public class GameManager : MonoBehaviour
 
     private void handleVerticalMovement()
     {
-        movementVertical = Input.GetAxis("Vertical");
+        bool isSwipeMovement = SwipeManager.swipeUp || SwipeManager.swipeDown /*|| SwipeManager.tap*/;
+        movementVertical = isSwipeMovement ? 1 : Input.GetAxis("Vertical");
         if (movementVertical > 0)
         {
             bouncyBalls = FindObjectsOfType<BouncyBall>();
